@@ -6,7 +6,7 @@ import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 
 export interface JwtPayload {
-  sub: number;
+  sub: string;
   email: string;
   role: string;
 }
@@ -30,6 +30,9 @@ export class JwtPermissionsStrategy extends PassportStrategy(Strategy, 'jwt-perm
     });
     if (!user) {
       throw new UnauthorizedException();
+    }
+    if(!user.isActive){
+      throw new UnauthorizedException('Usuario inactivo, contacta a soporte.')
     }
     return {
       id: user.id,

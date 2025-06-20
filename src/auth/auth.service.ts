@@ -40,7 +40,7 @@ export class AuthService {
   }
 
 
-  async refreshTokens(userId: number, refreshToken: string) {
+  async refreshTokens(userId: string, refreshToken: string) {
     const user = await this.usersService.findById(userId);
     if (!user) throw new ForbiddenException('Acceso denegado');
     // Buscar los tokens del usuario
@@ -86,13 +86,13 @@ export class AuthService {
   }
 
 
-  async logout(userId: number) {
+  async logout(userId: string) {
     await this.refreshTokenRepo.delete({ user: { id: userId } });
     return { message: 'Sesión cerrada en todos los dispositivos' };
   }
 
 
-  async saveRefreshToken(userId: number, token: string, expiresIn: string) {
+  async saveRefreshToken(userId: string, token: string, expiresIn: string) {
     const user = await this.usersService.findById(userId);
     if (!user) throw new NotFoundException('Usuario no encontrado');
     const expiresAt = new Date(Date.now() + ms(expiresIn));

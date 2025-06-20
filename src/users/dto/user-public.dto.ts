@@ -3,10 +3,13 @@ import { UserRole } from '../entities/user.entity';
 
 export class UserPublicDto {
   @ApiProperty()
-  id: number;
+  id: string;
 
   @ApiProperty()
   email: string;
+
+  @ApiProperty()
+  isActive: boolean;
 
   @ApiProperty({ enum: UserRole })
   role: UserRole;

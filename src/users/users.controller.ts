@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Req, Patch, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req, Patch, Param, ParseIntPipe, ParseUUIDPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
@@ -6,9 +6,9 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { CreateUserWithProfileDto } from './dto/create-user.dto';
 import { AssignPermissionsDto, UpdateNameDto, UpdatePhotoDto } from './dto/update-profile.dto';
-import { UserPublicDto } from './dto/public-user.dto';
 import { PermissionsGuard } from 'src/auth/guards/permissions.guard';
 import { Permissions } from 'src/auth/decorators/permissions.decorator';
+import { UserPublicDto } from './dto/user-public.dto';
 
 @Controller('users')
 export class UsersController {
@@ -47,7 +47,7 @@ export class UsersController {
   @Roles('admin')
   @Patch(':id/permissions')
   async assignPermissions(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: AssignPermissionsDto
   ) {
     return this.usersService.assignPermissions(id, dto.permissions);
