@@ -26,7 +26,7 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { email: user.email, sub: user.id, role: user.role, profile: user.profile };
+    const payload = { email: user.email, sub: user.id, role: user.role };
     const access_token = this.jwt.sign(payload, {
       secret: process.env.JWT_ACCESS_SECRET,
       expiresIn: process.env.TOKEN_EXPIRED,
@@ -60,7 +60,7 @@ export class AuthService {
     }
     // Eliminar el token usado (rotación de token)
     await this.refreshTokenRepo.delete({ id: matchedToken.id });
-    const payload = { email: user.email, sub: user.id, role: user.role, profile: user.profile };
+    const payload = { email: user.email, sub: user.id, role: user.role };
     const newAccessToken = this.jwt.sign(payload, {
       secret: process.env.JWT_ACCESS_SECRET,
       expiresIn: process.env.TOKEN_EXPIRED,

@@ -95,12 +95,12 @@ export class UsersService {
       where: { id: userId },
       relations: ['permissions'],
     });
-    if (!user) throw new NotFoundException('Usuario no encontrado');
+    if (!user) throw new NotFoundException('Usuario no encontrado.');
     const permissions = await this.permissionRepository.findBy({
       name: In(permissionNames),
     });
     if (permissions.length !== permissionNames.length) {
-      throw new BadRequestException('Uno o más permisos no existen');
+      throw new BadRequestException('Uno o más permisos no existen.');
     }
     user.permissions = permissions;
     await this.userRepository.save(user);

@@ -1,14 +1,9 @@
-import { Controller, Get, Post, Body, UseGuards, Req, Patch, Param, ParseIntPipe, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Req, Patch, Param, ParseUUIDPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
 import { CreateUserWithProfileDto } from './dto/create-user.dto';
 import { AssignPermissionsDto, UpdateNameDto, UpdatePhotoDto } from './dto/update-profile.dto';
-import { PermissionsGuard } from 'src/auth/guards/permissions.guard';
-import { Permissions } from 'src/auth/decorators/permissions.decorator';
-import { UserPublicDto } from './dto/user-public.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { UserRole } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
@@ -19,34 +14,27 @@ export class UsersController {
     return this.usersService.create(body);
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
+  @Auth()
   @Patch('profile/name')
   updateName(@Req() req, @Body() dto: UpdateNameDto) {
     return this.usersService.updateFullName(req.user.id, dto.fullName);
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
+  @Auth()
   @Patch('profile/photo')
   updatePhoto(@Req() req, @Body() dto: UpdatePhotoDto) {
     return this.usersService.updateProfileImage(req.user.id, dto.profileImageUrl);
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt-permissions'), PermissionsGuard)
-  @Permissions('view_users')
+  @Auth({ permissions: ['view_users'] })
   @Get('all')
-  @ApiOkResponse({ type: [UserPublicDto] })
-  getSecret(@Req() req) {
+  getUsers() {
     return this.usersService.findAll();
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('admin')
+  @Auth({ roles: [UserRole.ADMIN] })
   @Patch(':id/permissions')
-  async assignPermissions(
+  assignPermissions(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: AssignPermissionsDto
   ) {

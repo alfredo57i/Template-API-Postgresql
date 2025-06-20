@@ -6,6 +6,7 @@ import { Permission } from "src/users/entities/permission.entity";
 export enum UserRole {
   ADMIN = 'admin',
   CLIENT = 'client',
+  OWNER = 'owner',
 }
 
 @Entity()
